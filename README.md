@@ -1,78 +1,169 @@
-# Assignment
-## Learning Probability Density Functions using Roll-Number-Parameterized Non-Linear Model
+````md
+# Learning Probability Density Functions using GAN (NO2 Dataset)
 
---------------------------------------------
+## Project Overview
 
-Objective
+This project learns an unknown probability density function (PDF) of a transformed random variable using a Generative Adversarial Network (GAN).
 
-The objective of this assignment is to:
-1. Apply a roll-number-based nonlinear transformation to a dataset feature.
-2. Learn the parameters of a probability density function (PDF) for the transformed variable.
-3. Estimate Gaussian distribution parameters using Maximum Likelihood Estimation (MLE).
+The original feature used is NO2 concentration from the India Air Quality dataset. Each value is transformed into a new variable `z` using a nonlinear transformation, and then a GAN is trained only on samples of `z` to learn its distribution.
 
---------------------------------------------
+---
 
-Dataset
+## Dataset
 
-Dataset Used: India Air Quality Data  
-Feature Considered: NO2
+- **Dataset Name:** India Air Quality Data  
+- **Source:** Kaggle  
+- **Link:** https://www.kaggle.com/datasets/shrutibhargava94/india-air-quality-data
 
-The dataset contains air quality measurements across various locations in India.
-For this assignment, only the NO2 column is used as the feature variable x.
+- **Feature Used:** NO2 concentration
 
---------------------------------------------
+---
 
-Step 1: Non-Linear Transformation
+## Objective
 
-Each value of x is transformed into a new variable z using:
+To estimate the probability density function of transformed variable `z` without assuming any analytical distribution such as Gaussian, Exponential, etc.
 
-z = x + a_r * sin(b_r * x)
+The GAN learns only from data samples.
+
+---
+
+## Transformation Function
+
+```math
+z = x + a_r \sin(b_r x)
+````
 
 Where:
-a_r = 0.05 * (r mod 7)
-b_r = 0.3 * (r mod 5 + 1)
-r = 102303463
 
-For roll number 102303463:
-r mod 7 = 3
-r mod 5 = 3
+* `a_r = 0.5 × (r mod 7)`
+* `b_r = 0.3 × ((r mod 5) + 1)`
 
-Therefore:
-a_r = 0.15
-b_r = 1.2
+`r` = University Roll Number
 
-Final transformation:
-z = x + 0.15 * sin(1.2x)
+---
 
---------------------------------------------
+## Used Roll Number
 
-Step 2: Learning the Probability Density Function
+`102303463`
 
-The transformed variable z is modeled using the Gaussian probability density function:
+### Computed Parameters
 
-p(z) = c * exp(-lambda * (z - mu)^2)
+* `a_r = 0.5`
+* `b_r = 1.2`
 
-Using Maximum Likelihood Estimation:
+---
 
-mu = mean(z)
-sigma^2 = variance(z)
+## GAN Architecture
 
-lambda = 1 / (2 * sigma^2)
-c = 1 / sqrt(2 * pi * sigma^2)
+### Generator
 
---------------------------------------------
+Input: Random noise from Normal Distribution N(0,1)
 
-Estimated Parameters
+Layers:
 
-lambda = 0.0014599899081690277
-mu     = 25.80638519611327
-c      = 0.021557579212396885
+* Dense (16 neurons, ReLU)
+* Dense (32 neurons, ReLU)
+* Dense (1 neuron output)
 
---------------------------------------------
+### Discriminator
 
-Conclusion
+Input: Real/Fake sample
 
-The NO2 feature was transformed using a roll-number-based nonlinear function.
-A Gaussian distribution was fitted to the transformed variable using Maximum
-Likelihood Estimation. The estimated parameters define the learned probability
-density function for the transformed data.
+Layers:
+
+* Dense (32 neurons, ReLU)
+* Dense (16 neurons, ReLU)
+* Dense (1 neuron, Sigmoid)
+
+---
+
+## Training Process
+
+The GAN is trained using two networks:
+
+### Discriminator learns to classify:
+
+* Real transformed samples `z`
+* Fake generated samples `z_f`
+
+### Generator learns to fool the discriminator by producing realistic samples.
+
+---
+
+## PDF Approximation
+
+After training:
+
+1. Generate thousands of fake samples using Generator
+2. Apply Kernel Density Estimation (KDE)
+3. Plot learned probability density function
+
+---
+
+## Libraries Used
+
+* Python
+* NumPy
+* Pandas
+* Matplotlib
+* Scikit-learn
+* SciPy
+* TensorFlow / Keras
+
+---
+
+## Output
+
+The final graph compares:
+
+* Histogram of real transformed data
+* GAN learned PDF curve
+
+---
+
+## Observations
+
+### Mode Coverage
+
+GAN captures major peaks of the real distribution.
+
+### Training Stability
+
+GAN loss may fluctuate during training, which is normal.
+
+### Quality of Generated Distribution
+
+Generated samples closely follow transformed NO2 distribution.
+
+---
+
+## How to Run
+
+```bash
+pip install numpy pandas matplotlib scikit-learn scipy tensorflow
+```
+
+Then run:
+
+```python
+python main.py
+```
+
+---
+
+## Future Improvements
+
+* Use WGAN for better stability
+* Deeper Generator network
+* Hyperparameter tuning
+* Compare KDE vs Histogram PDF
+
+---
+
+## Author
+
+Machine Learning Assignment
+Probability Density Estimation using GAN
+
+```
+```
