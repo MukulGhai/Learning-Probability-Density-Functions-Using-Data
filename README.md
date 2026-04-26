@@ -1,4 +1,3 @@
-````md
 # Learning Probability Density Functions using GAN (NO2 Dataset)
 
 ## Project Overview
